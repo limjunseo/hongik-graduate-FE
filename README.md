@@ -7,20 +7,44 @@
 
 **Backend**: https://github.com/limjunseo/hongik-graduate-BE
 
-## 팀원 온보딩: Windows에서 한 번에 실행
+## 팀원 온보딩: Windows CMD 한 줄 설치·실행
 
-필수 설치: **Node.js 22 이상**, **Java JDK 17 이상**, **Git**. 최초 설치는 인터넷이 필요합니다.
+**Windows 10/11에서 명령 프롬프트(CMD)를 열고 아래 한 줄을 복사·붙여넣으세요.**
+Git/Node/JDK 사전 설치나 저장소 수동 복제가 필요 없습니다.
 
-1. 다음 명령으로 FE 저장소를 복제하거나 GitHub에서 ZIP으로 다운로드합니다.
-   ```powershell
-   git clone https://github.com/limjunseo/hongik-graduate-FE.git
-   ```
-2. 폴더의 **`start-local.cmd`** 를 더블클릭합니다.
-3. 스크립트가 자동으로 백엔드 저장소를 찾아 사용하거나, 없으면 GitHub에서 다운로드합니다. FE 의존성 설치와 로컬 JWT 비밀키 생성도 수행합니다.
-4. 백엔드/프론트엔드 터미널이 별도로 열리고 `http://localhost:5173` 으로 브라우저를 엽니다.
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $p=Join-Path $env:TEMP 'stori-bootstrap.ps1'; Invoke-WebRequest 'https://raw.githubusercontent.com/limjunseo/hongik-graduate-FE/main/bootstrap.ps1' -UseBasicParsing -OutFile $p; & $p"
+```
 
-> 처음 Maven을 다운로드하는 경우 백엔드 기동이 늦을 수 있습니다. 터미널의 오류를 확인하세요.
-> 창을 닫거나 Ctrl+C를 누르면 해당 서버가 종료됩니다.
+이 명령어는 공개 [FE 저장소의 `bootstrap.ps1`](./bootstrap.ps1)을 HTTPS로 내려받아 실행합니다.
+팀원은 실행 전에 해당 스크립트를 읽어볼 수 있습니다. 인터넷 연결과 Windows의
+**WinGet(Microsoft App Installer)**이 필요하며, PC의 설치 권한·보안 정책에 따라
+관리자 권한 승인(UAC)이 필요하거나 설치가 차단될 수 있습니다.
+
+한 번 실행하면 다음 순서로 처리합니다.
+
+1. Git, Node.js **22+**, JDK **17+** 설치 여부와 버전을 확인합니다.
+   부족한 도구만 공식 WinGet 패키지(`Git.Git`, `OpenJS.NodeJS.LTS`,
+   `Microsoft.OpenJDK.17`)로 설치합니다.
+2. `%USERPROFILE%\stori-workspace\` 아래에 FE와 BE GitHub 저장소를 복제합니다.
+   재실행 시에는 로컬 수정사항이 없는 `main` 브랜치만 fast-forward 업데이트합니다.
+   기존 수정사항과 로컬 데이터·비밀키는 유지합니다.
+3. FE 패키지를 자동 설치하고, 백엔드의 JWT 비밀키/H2 파일 DB 디렉터리를 준비합니다.
+   Maven Wrapper가 백엔드를 실행하며 별도 DB 서버는 필요 없습니다.
+4. FE/BE 터미널이 열리고 브라우저에 **http://localhost:5173**을 표시합니다.
+
+> 최초 Maven 다운로드는 시간이 걸릴 수 있습니다. 처음 설치하는 팀원 PC에서는
+> WinGet 설치가 끝나도 OS 정책상 새 터미널이나 관리자 승인이 필요할 수 있습니다.
+> 터미널 창을 닫거나 Ctrl+C를 누르면 해당 로컬 서버가 종료됩니다.
+
+### 재실행 / 테스트
+
+- 같은 CMD 한 줄을 다시 입력하면 안전한 경우 FE와 BE를 업데이트한 후 실행합니다.
+- 이미 내려받은 FE 폴더에서는 `start-local.cmd` 더블클릭만으로 재실행할 수 있습니다.
+- 설치 없이 점검: `powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1 -DryRun`
+- 설치 도구가 모두 있는 PC에서 테스트 실행: `powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1 -SkipInstall`
+
+
 
 ### localhost 주소
 
@@ -79,6 +103,12 @@ API Key 미설정 시 실제 AI 응답이 생성되지 않습니다.
 사용량/비용 제한 및 모의면접 기능은 본 프로젝트 범위에서 제외했습니다.
 상세: [백엔드 AI 안내](https://github.com/limjunseo/hongik-graduate-BE/blob/main/docs/AI_READY_GUIDE.md).
 
+## UI/UX 글자 크기
+
+초기 버전의 9~12px 초소형 텍스트를 확대해 메뉴, 카드, 버튼, 입력창 등
+주요 화면 텍스트를 더 읽기 쉽게 조정했습니다. 화면 폭에 따라 사이드바,
+자소서 편집기, 모바일 하단 내비게이션의 간격도 함께 조정했습니다.
+
 ## 화면
 
 - 로그인/가입 (이메일 확인), 로그인 없는 미리보기
@@ -98,6 +128,7 @@ AI 제안은 답변에 자동 반영/저장되지 않으며 사용자가 검토�
 npm ci
 npm run dev
 npm run build
+npm run test:ui  # 실행 중인 localhost:5173 + Windows Chrome/Edge 필요
 ```
 
 `npm run build`는 TypeScript 타입 검사와 Vite 배포 빌드를 수행합니다.
