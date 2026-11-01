@@ -49,6 +49,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\start-local.ps1
 회원가입·이메일 인증은 백엔드의 SMTP 설정이 있어야 작동합니다.
 팀원이 실제 회원 기능을 사용하려면 백엔드 계정을 생성할 수 있는 환경이어야 합니다.
 
+## DB: 별도 서버 설치 없음
+
+- **H2 파일 데이터베이스**가 백엔드에 내장되어 있습니다. SQLite와 마찬가지로
+  별도 MySQL/PostgreSQL 인스턴스나 Docker DB 컨테이너가 필요하지 않습니다.
+- DB 위치: 백엔드 저장소 `be/data/hongik-graduate.mv.db`.
+- `start-local.cmd`가 데이터 폴더를 만들고 백엔드 실행 시 DB가 초기화됩니다.
+  이후 서버를 껐다 켜도 기존 데이터는 유지됩니다.
+- 팀원마다 자기 PC의 로컬 데이터가 저장되며 실시간 데이터 동기화는 되지 않습니다.
+- **백업:** 백엔드 터미널을 종료하고 FE 폴더의 **`backup-local-db.cmd`를 더블클릭**하세요. PowerShell 사용 시 아래 명령도 가능합니다.
+  ```powershell
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\backup-local-db.ps1
+  ```
+  `be/data/backups/`에 날짜별 백업을 만들며, DB 사용 중에는 안전을 위해 거부합니다.
+  저장소를 통째로 삭제하기 전에는 백업 파일을 다른 곳에 보관하세요. PDF 등 첨부 파일은 `be/uploads/`에 별도로 저장되므로 필요하다면 그 폴더도 백업해야 합니다.
+  DB 경로를 직접 변경한 경우 백업 스크립트의 `-DatabaseFile` 옵션을 사용하면 됩니다.
+
 ## 실제 AI 연결
 
 백엔드의 `be/.env-local`에 다음 환경변수를 직접 추가합니다.

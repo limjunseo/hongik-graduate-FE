@@ -61,6 +61,12 @@ if (-not $FrontendOnly) {
     if (-not (Test-Path -LiteralPath (Join-Path $beDir 'mvnw.cmd'))) {
         Fail "Backend Maven Wrapper not found: $beDir"
     }
+    # Always use a persistent on-disk H2 database, without an external DB service.
+    $databaseDir = Join-Path $beDir 'data'
+    if (-not (Test-Path -LiteralPath $databaseDir)) {
+        New-Item -ItemType Directory -Path $databaseDir -Force | Out-Null
+    }
+    Note "Local embedded database directory: $databaseDir"
     $secretFile = Join-Path $beDir '.env-local'
     if (-not (Test-Path -LiteralPath $secretFile)) {
         $bytes = New-Object byte[] 32
